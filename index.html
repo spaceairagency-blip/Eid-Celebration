@@ -24,14 +24,12 @@
             z-index: -2;
         }
         #stars-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-        
         .controls { position: fixed; top: 20px; right: 20px; z-index: 100; }
         .control-btn {
             background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3);
             color: white; border-radius: 50%; cursor: pointer; backdrop-filter: blur(5px);
             width: 40px; height: 40px; display: grid; place-items: center;
         }
-
         .main-wrapper { 
             display: flex; 
             flex-direction: column; 
@@ -41,29 +39,23 @@
             padding: 40px 20px;
             gap: 20px;
         }
-
         .glass-card {
             background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2); padding: clamp(20px, 5vw, 40px);
             border-radius: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             width: 100%; max-width: 400px; text-align: center;
         }
-
         h1 {
             font-family: 'Bungee', cursive; font-size: clamp(1.4rem, 8vw, 2.2rem);
             background: linear-gradient(to bottom, #fff, var(--gold));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin: 10px 0;
         }
-
-        /* Countdown Styles */
         .countdown-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
         @media (min-width: 400px) { .countdown-grid { grid-template-columns: repeat(4, 1fr); } }
         .time-box { background: rgba(0, 0, 0, 0.5); padding: 15px 5px; border-radius: 15px; border-bottom: 3px solid var(--gold); }
         .num { display: block; font-family: 'Bungee'; font-size: 1.5rem; color: var(--gold); }
         .label { font-size: 0.6rem; opacity: 0.7; }
-
-        /* Salami Table Styles */
         .salami-wrapper {
             width: 100%;
             max-width: 400px;
@@ -78,8 +70,6 @@
         thead { background: rgba(241, 196, 15, 0.15); color: var(--gold); font-family: 'Bungee'; }
         th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .symbol { color: var(--gold); font-weight: 900; }
-
-        /* Buttons */
         .button-group { display: flex; gap: 10px; margin-top: 15px; }
         .mega-btn {
             background: linear-gradient(135deg, var(--gold), #f39c12); color: #000;
@@ -89,8 +79,6 @@
         }
         .mega-btn:active { transform: scale(0.95); }
         .secondary-btn { background: transparent; color: var(--gold); border: 2px solid var(--gold); }
-        
-        /* Custom Audio Player Styling - Hidden by default */
         .audio-player-container {
             position: fixed;
             bottom: 20px;
@@ -101,7 +89,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 10px 15px;
-            display: none; /* Hidden until Eid Day */
+            display: none;
             align-items: center;
             gap: 12px;
             width: 260px;
@@ -116,14 +104,11 @@
         .track-name { font-size: 0.7rem; font-family: 'Bungee'; color: var(--gold); display: block; }
         .audio-progress-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 5px; cursor: pointer; }
         .audio-progress-fill { height: 100%; background: var(--gold); width: 0%; border-radius: 2px; }
-
-        /* Story Styles */
         #scene-icon { font-size: 80px; display: block; margin-bottom: 10px; }
         #scene-text { font-family: 'Bungee'; min-height: 4em; display: grid; place-items: center; }
         #progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin: 20px 0; }
         #progress-bar { width: 0%; height: 100%; background: var(--gold); }
         #share-canvas { display: none; }
-        
     </style>
 </head>
 <body>
@@ -132,7 +117,7 @@
     <canvas id="share-canvas" width="600" height="600"></canvas>
 
     <div class="controls">
-        <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
+        <button id="fs-btn" class="control-btn" onclick="toggleFullscreen()">⛶</button>
     </div>
 
     <div id="audio-ui" class="audio-player-container">
@@ -153,7 +138,6 @@
             <p style="font-size: 0.7rem; letter-spacing: 3px; color: var(--gold); margin: 0;">EID AL-FITR 2026</p>
             <h1>EID IS COMING</h1>
             <div class="button-group">
-                <button onclick="shareCountdown()" class="mega-btn">Share Stats</button>
                 <button onclick="copyLink(this)" class="mega-btn secondary-btn">Copy Link</button>
             </div>
             <div class="countdown-grid">
@@ -169,7 +153,7 @@
             <h1>EID MUBARAK</h1>
             <button class="mega-btn" onclick="askNameAndStart()">WATCH EID JOURNEY</button>
         </div>
-        
+                
         <div id="story-ui" class="glass-card" style="display: none;">
             <span id="scene-icon">🌙</span>
             <div id="scene-text">PREPARING...</div>
@@ -192,7 +176,6 @@
             </table>
         </div>
     </div>
-
     <script>
         const eidDate = new Date("2026-03-20T18:40:00").getTime(); 
         let userName = "Friend";
@@ -203,18 +186,31 @@
         const audioFill = document.getElementById('audio-track-fill');
         const audioUI = document.getElementById('audio-ui');
 
+        // --- NEW FULLSCREEN FUNCTION ---
+        function toggleFullscreen() {
+            const btn = document.getElementById('fs-btn');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen()
+                    .then(() => btn.innerText = "✖")
+                    .catch(err => console.error(err));
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    btn.innerText = "⛶";
+                }
+            }
+        }
+
         function updateClock() {
             const now = new Date().getTime();
             const distance = eidDate - now;
 
             if (distance < 0) {
-                // IT IS EID DAY
                 document.getElementById('countdown-ui').style.display = 'none';
                 document.getElementById('eid-ui').style.display = 'block';
-                audioUI.style.display = 'flex'; // Show player only on Eid
+                audioUI.style.display = 'flex';
             } else {
-                // NOT EID YET
-                audioUI.style.display = 'none'; // Ensure player is hidden
+                audioUI.style.display = 'none';
                 document.getElementById('days').innerText = Math.floor(distance / 86400000).toString().padStart(2, '0');
                 document.getElementById('hours').innerText = Math.floor((distance % 86400000) / 3600000).toString().padStart(2, '0');
                 document.getElementById('mins').innerText = Math.floor((distance % 3600000) / 60000).toString().padStart(2, '0');
@@ -276,7 +272,6 @@
             document.getElementById('final-actions').style.display = 'block';
         }
 
-        // Star Background
         const sCanvas = document.getElementById('stars-canvas');
         const sCtx = sCanvas.getContext('2d');
         let stars = [];
