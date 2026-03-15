@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -289,6 +290,73 @@
             });
             requestAnimationFrame(draw);
         }
+        // Service Worker Register kora hocche
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker Registered!'))
+                .catch(err => console.log('Service Worker Failed:', err));
+        });
+}
+// ... existing script tags ...
+
+async function shareExperience() {
+    const canvas = document.getElementById('share-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Drawing a nice card on the hidden canvas
+    ctx.fillStyle = '#090a0f';
+    ctx.fillRect(0, 0, 600, 600);
+    
+    // Gold Border
+    ctx.strokeStyle = '#f1c40f';
+    ctx.lineWidth = 15;
+    ctx.strokeRect(20, 20, 560, 560);
+
+    // Text Content
+    ctx.fillStyle = '#f1c40f';
+    ctx.font = 'bold 50px Courier New'; // Fallback font
+    ctx.textAlign = 'center';
+    ctx.fillText('EID MUBARAK', 300, 200);
+    
+    ctx.fillStyle = 'white';
+    ctx.font = '30px Arial';
+    ctx.fillText(`Special Gift for: ${userName}`, 300, 300);
+    
+    ctx.fillStyle = '#f1c40f';
+    ctx.font = '20px Arial';
+    ctx.fillText('Created with ✨ Personal Experience', 300, 500);
+
+    // Convert to Image and Share
+    canvas.toBlob(async (blob) => {
+        const file = new File([blob], 'eid_gift.png', { type: 'image/png' });
+        const shareData = {
+            title: 'Eid Mubarak!',
+            text: `Hey! Check out this special Eid experience from ${userName} ✨`,
+            url: window.location.href,
+            files: [file]
+        };
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.log('Error sharing:', err);
+                // Fallback: Just share the link if file share fails
+                await navigator.share({
+                    title: 'Eid Mubarak',
+                    text: `Hey! Check out this special Eid experience from ${userName} ✨`,
+                    url: window.location.href
+                });
+            }
+        } else {
+            // Fallback for browsers that don't support file sharing
+            alert("Sharing not supported on this browser. Copy the link instead!");
+        }
+    });
+}
+
+// ... existing script content ...
         window.onresize = init; init(); draw();
     </script>
 </body>
