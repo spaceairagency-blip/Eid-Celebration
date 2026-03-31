@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eid-mubarak-v1';
+const CACHE_NAME = 'eid-mubarak-v2';
 const ASSETS = [
     './',          // Apnar main HTML file
     'index.html',  // File name jodi index.html hoy
